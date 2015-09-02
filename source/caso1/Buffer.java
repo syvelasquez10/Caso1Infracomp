@@ -38,9 +38,7 @@ public class Buffer {
 		}
 		Mensaje mensaje=buffer.remove(0);
 		contador--;
-		if(tamano==contador-1) {
-			notify();
-		}
+		notify();
 		return mensaje;
 	}
 	
@@ -48,9 +46,12 @@ public class Buffer {
 		try
 		{
 			Buffer buffer = new Buffer(1);
-			Cliente cliente = new Cliente(buffer, 1);
+			for(int i = 0; i <= 3; i++)
+			{
+				Cliente cliente = new Cliente(buffer, 3);
+				cliente.start();
+			}
 			Servidor servidor = new Servidor(buffer);
-			cliente.start();
 			servidor.start();
 //			Properties propiedades = new Properties();
 //			FileInputStream fis = new FileInputStream(new File("data/configuracion.properties"));
