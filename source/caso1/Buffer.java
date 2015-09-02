@@ -45,30 +45,26 @@ public class Buffer {
 	public static void main(String[] args) {
 		try
 		{
-			Buffer buffer = new Buffer(1);
-			for(int i = 0; i <= 3; i++)
+			Properties propiedades = new Properties();
+			FileInputStream fis = new FileInputStream(new File("data/configuracion.properties"));
+			propiedades.load(fis);
+			fis.close();
+			int capacidadBuffer = Integer.parseInt(propiedades.getProperty("capacidad.buffer"));
+			int numeroClientes = Integer.parseInt(propiedades.getProperty("numero.clientes"));
+			int numeroConsultas = Integer.parseInt(propiedades.getProperty("numero.consultas"));
+			int numeroServidores = Integer.parseInt(propiedades.getProperty("numero.servidores"));	
+			
+			Buffer buffer = new Buffer(capacidadBuffer);
+			for(int i = 0; i <= numeroClientes; i++)
 			{
-				Cliente cliente = new Cliente(buffer, 3);
+				Cliente cliente = new Cliente(buffer, numeroConsultas);
 				cliente.start();
 			}
-			Servidor servidor = new Servidor(buffer);
-			servidor.start();
-//			Properties propiedades = new Properties();
-//			FileInputStream fis = new FileInputStream(new File("data/configuracion.properties"));
-//			propiedades.load(fis);
-//			fis.close();
-//			int numeroClientes = Integer.parseInt(propiedades.getProperty("numero.clientes"));
-//			int numeroConsultas = Integer.parseInt(propiedades.getProperty("numero.consultas"));
-//			int numeroServidores = Integer.parseInt(propiedades.getProperty("numero.servidores"));
-//			
-//			Buffer buffer = new Buffer(0);
-//			ArrayList<Cliente> clientes= new ArrayList<Cliente>();
-//			for (int i = 0; i < numeroClientes; i++)
-//			{
-//				Cliente clienteActual= new Cliente(buffer, 0);
-//				clientes.add(clienteActual);
-//			}
-			
+			for(int i = 0; i <= numeroServidores; i++)
+			{
+				Servidor servidor = new Servidor(buffer);
+				servidor.start();
+			}
 		}
 		catch (Exception e)
 		{
