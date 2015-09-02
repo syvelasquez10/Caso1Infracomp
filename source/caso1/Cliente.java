@@ -15,6 +15,7 @@ public class Cliente extends Thread{
 		for(int i=0; i < numeroConsultas; i++) {
 			Mensaje mensaje = new Mensaje(""+i);
 			buffer.enviar(mensaje);
+			mensaje.dormir();
 			System.out.println("Se leyó el mensaje: "+mensaje.toString());
 		}
 	}

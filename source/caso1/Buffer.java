@@ -30,14 +30,6 @@ public class Buffer {
 		}
 		buffer.add(mensaje);
 		contador++;
-//		synchronized(mensaje) {
-//			try {
-//				System.out.println("El cliente añade el mensaje");
-//				mensaje.wait();
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
 	}
 	
 	public synchronized Mensaje recibir() {
@@ -49,7 +41,6 @@ public class Buffer {
 		if(tamano==contador-1) {
 			notify();
 		}
-		System.out.println("Trata de retornar el mensaje");
 		return mensaje;
 	}
 	

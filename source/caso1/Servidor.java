@@ -12,8 +12,8 @@ public class Servidor extends Thread {
 		Mensaje mensaje=buffer.recibir();
 		while(mensaje==null) {
 			mensaje = buffer.recibir();
+			yield();
 		}
-		mensaje.notify();
 		mensaje.responder();
 	}
 }
