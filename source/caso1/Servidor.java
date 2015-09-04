@@ -9,13 +9,12 @@ public class Servidor extends Thread {
 	}
 	
 	public void run() {
-		for(int i=0; i <= 100; i++) {
+		while(buffer.darCantidadClientes()>0) {
 			Mensaje mensaje=buffer.recibir();
-			while(mensaje==null) {
-				mensaje = buffer.recibir();
-				yield();
+			if(mensaje!=null) {
+				mensaje.responder();
 			}
-			mensaje.responder();
+			yield();
 		}
 	}
 }
