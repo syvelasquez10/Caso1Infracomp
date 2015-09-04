@@ -13,10 +13,13 @@ public class Buffer {
 	
 	private int contador;
 	
-	public Buffer(int tamano) {
+	private int cantidadMensajes;
+	
+	public Buffer(int tamano, int cantidadMensajes) {
 		this.tamano=tamano;
 		contador=0;
 		buffer = new ArrayList<Mensaje>();
+		this.cantidadMensajes=cantidadMensajes;
 	}
 	
 	public synchronized void enviar(Mensaje mensaje) {
@@ -42,6 +45,14 @@ public class Buffer {
 		return mensaje;
 	}
 	
+	public int darCantidadConsultas() {
+		return cantidadMensajes;
+	}
+	
+	public void restarCantidadConsultas() {
+		cantidadMensajes--;
+	}
+	
 	public static void main(String[] args) {
 		try
 		{
@@ -54,22 +65,28 @@ public class Buffer {
 			int numeroConsultas = Integer.parseInt(propiedades.getProperty("numero.consultas"));
 			int numeroServidores = Integer.parseInt(propiedades.getProperty("numero.servidores"));	
 			
-			Buffer buffer = new Buffer(capacidadBuffer);
-			for(int i = 0; i <= numeroClientes; i++)
+			
+			Buffer buffer = new Buffer(capacidadBuffer,numeroClientes*numeroConsultas);
+			for(int i = 0; i < numeroClientes; i++)
 			{
 				Cliente cliente = new Cliente(buffer, numeroConsultas);
 				cliente.start();
 			}
-			for(int i = 0; i <= numeroServidores; i++)
+			ArrayList<Servidor> servidores= new ArrayList<Servidor>();
+			for(int i = 0; i < numeroServidores; i++)
 			{
 				Servidor servidor = new Servidor(buffer);
+				servidores.add(servidor);
 				servidor.start();
 			}
+			while(buffer.darCantidadConsultas()>0){
+				
+			}
+			System.exit(1);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-
 	}
 }

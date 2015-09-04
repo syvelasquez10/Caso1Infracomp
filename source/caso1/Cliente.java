@@ -17,6 +17,7 @@ public class Cliente extends Thread{
 			buffer.enviar(mensaje);
 			mensaje.dormir();
 			System.out.println("Se leyó el mensaje: "+mensaje.toString());
+			buffer.restarCantidadConsultas();
 		}
 	}
 }
