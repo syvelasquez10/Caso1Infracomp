@@ -11,19 +11,16 @@ public class Buffer {
 	
 	private int tamano;
 	
-	private int contador;
-	
 	private int cantidadClientes;
 	
 	public Buffer(int tamano, int cantidadClientes) {
 		this.tamano=tamano;
 		this.cantidadClientes=cantidadClientes;
-		contador=0;
 		buffer = new ArrayList<Mensaje>();
 	}
 	
 	public synchronized void enviar(Mensaje mensaje) {
-		if(contador==tamano) {
+		if(buffer.size()==tamano) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -31,7 +28,6 @@ public class Buffer {
 			}
 		}
 		buffer.add(mensaje);
-		contador++;
 	}
 	
 	public synchronized Mensaje recibir() {
@@ -39,7 +35,6 @@ public class Buffer {
 			return null;
 		}
 		Mensaje mensaje=buffer.remove(0);
-		contador--;
 		notify();
 		return mensaje;
 	}
