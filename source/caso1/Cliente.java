@@ -6,18 +6,20 @@ public class Cliente extends Thread{
 	
 	private Buffer buffer;
 	
-	public Cliente(Buffer buffer, int numeroConsultas) {
+	private int id;
+	
+	public Cliente(Buffer buffer, int numeroConsultas, int id) {
 		this.numeroConsultas=numeroConsultas;
 		this.buffer=buffer;
+		this.id=id;
 	}
 	
 	public void run() {
 		for(int i=0; i < numeroConsultas; i++) {
 			Mensaje mensaje = new Mensaje(""+i);
 			buffer.enviar(mensaje);
-			mensaje.dormir();
-			System.out.println("Se leyó el mensaje: "+mensaje.toString());
+			System.out.println("Se leyó el mensaje de-"+id+"-: -"+mensaje.toString());
+			buffer.restarCantidadMensajes();
 		}
-		buffer.restarCantidadClientes();
 	}
 }

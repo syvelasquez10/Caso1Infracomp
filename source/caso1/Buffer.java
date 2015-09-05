@@ -8,45 +8,56 @@ import java.util.Properties;
 public class Buffer {
 
 	private ArrayList<Mensaje> buffer;
-	
+
 	private int tamano;
-	
-	private int cantidadClientes;
-	
-	public Buffer(int tamano, int cantidadClientes) {
+
+	private int cantidad;
+
+	public Buffer(int tamano, int cantidad) {
 		this.tamano=tamano;
-		this.cantidadClientes=cantidadClientes;
+		this.cantidad=cantidad;
 		buffer = new ArrayList<Mensaje>();
 	}
-	
-	public synchronized void enviar(Mensaje mensaje) {
-		if(buffer.size()==tamano) {
+
+	public void enviar(Mensaje mensaje) {
+		synchronized (this) {
+			if(buffer.size()==tamano) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		synchronized (mensaje) {
+			synchronized (this) {
+				buffer.add(mensaje);
+			}
 			try {
-				wait();
+				mensaje.wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		buffer.add(mensaje);
 	}
-	
+
 	public synchronized Mensaje recibir() {
-		if(buffer.isEmpty()) {
+		if(this.buffer.isEmpty()) {
 			return null;
 		}
-		Mensaje mensaje=buffer.remove(0);
+		Mensaje mensaje= this.buffer.remove(0);
 		notify();
 		return mensaje;
 	}
-	
-	public synchronized int darCantidadClientes() {
-		return cantidadClientes;
+
+	public synchronized int darCantidadMensajes() {
+		return cantidad;
 	}
-	
-	public synchronized void restarCantidadClientes() {
-		cantidadClientes--;
+
+	public synchronized void restarCantidadMensajes() {
+		cantidad--;
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			Properties propiedades = new Properties();
@@ -57,16 +68,12 @@ public class Buffer {
 			int numeroClientes = Integer.parseInt(propiedades.getProperty("numero.clientes"));
 			int numeroConsultas = Integer.parseInt(propiedades.getProperty("numero.consultas"));
 			int numeroServidores = Integer.parseInt(propiedades.getProperty("numero.servidores"));	
-			Buffer buffer = new Buffer(capacidadBuffer,numeroClientes);
+			Buffer buffer = new Buffer(capacidadBuffer,numeroClientes*numeroConsultas);
 			for(int i = 0; i < numeroClientes; i++) {
-				Cliente cliente = new Cliente(buffer, numeroConsultas);
-				cliente.start();
+				new Cliente(buffer, numeroConsultas, i).start();
 			}
-			ArrayList<Servidor> servidores= new ArrayList<Servidor>();
 			for(int i = 0; i < numeroServidores; i++) {
-				Servidor servidor = new Servidor(buffer);
-				servidores.add(servidor);
-				servidor.start();
+				new Servidor(buffer).start();
 			}
 		}
 		catch (Exception e) {
