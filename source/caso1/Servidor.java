@@ -9,7 +9,7 @@ public class Servidor extends Thread {
 	}
 	
 	public void run() {
-		while(buffer.darCantidadMensajes()>0){
+		while(buffer.darCantidadMensajes()>0) {
 			Mensaje mensaje=buffer.recibir();
 			if(mensaje!=null) {
 				synchronized(mensaje) {

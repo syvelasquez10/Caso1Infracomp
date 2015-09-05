@@ -1,8 +1,5 @@
 package caso1;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 public class Cliente extends Thread{
 
 	private int numeroConsultas;
